@@ -87,11 +87,13 @@ class ETG_model():
         else:
             self.base_foot = np.array([ 0.18,-0.15,-0.23,0.18,0.148,-0.23,\
                         -0.18,-0.14,-0.23,-0.18,0.135,-0.23])
-        if self.task_mode == "balance":
+        if self.task_mode.startswith("balance"):
+            print("ok!")
             self.base_foot[1] = -step_y
             self.base_foot[4] = step_y
             self.base_foot[7] = -step_y
             self.base_foot[10] = step_y
+            print(self.base_foot)
     def forward(self,w,b,x):
         x1 = np.asarray(x[0]).reshape(-1,1)
         x2 = np.asarray(x[1]).reshape(-1,1)
@@ -119,7 +121,7 @@ class ETG_model():
             for i in range(4):
                 delta = new_act[i*3:(i+1)*3].copy()
                 while(1):
-                    index,angle = env.ComputeMotorAnglesFromFootLocalPosition(i,delta+base_foot[i*3:(i+1)*3])
+                    index,angle = env.ComputeMotorAnglesFromFootLocalPosition(i,delta+self.base_foot[i*3:(i+1)*3])
                     if np.sum(np.isnan(angle))==0:
                         break
                     delta *= 0.95

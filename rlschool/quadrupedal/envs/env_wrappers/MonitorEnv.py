@@ -15,6 +15,7 @@ def EnvWrapper(env,param,sensor_mode,normal=0,ETG_T=0.5,enable_action_filter=Fal
                 reward_p=1,ETG=1,ETG_path="",ETG_T2=0.5,random_param=None,
                 ETG_H=20,act_mode="traj",vel_d=0.6,vel_mode="max",
                 task_mode="normal",step_y=0.05):
+    print("stepy:",step_y)
     env = ETGWrapper(env=env,ETG=ETG,ETG_T=ETG_T,ETG_path=ETG_path,
                     ETG_T2=ETG_T2,ETG_H=ETG_H,act_mode=act_mode,
                     task_mode=task_mode,step_y=step_y)
@@ -312,8 +313,8 @@ class RewardShaping(gym.Wrapper):
             info['d_yaw'] = kwargs["d_yaw"]
         else:
             info['d_yaw'] = 0
-        if self.render:
-            self.line_id = self.draw_direction(info)
+        # if self.render:
+        #     self.line_id = self.draw_direction(info)
         return obs,info
 
     def step(self,action,**kwargs):
@@ -359,9 +360,10 @@ class RewardShaping(gym.Wrapper):
         self.last_base10[0,:] = np.array(info['base']).reshape(1,3)
         self.last_footposition = self.get_foot_world(info)
         info["foot_position_world"] = copy(self.last_footposition)
-        if self.render:
-            self.pybullet_client.removeUserDebugItem(self.line_id)
-            self.line_id = self.draw_direction(info)
+        # if self.render and self.steps%5==0:
+        #     self.pybullet_client.removeUserDebugItem(self.line_id)
+        #     line_id = self.draw_direction(info)
+        #     self.line_id = line_id
         return (obs, self.reward_p*rewards, done, info)
 
 
@@ -396,7 +398,7 @@ class RewardShaping(gym.Wrapper):
         footz = footposition[:,-1]
         base = info["base"]
         base_std = np.sum(np.std(self.last_base10,axis=0))
-        return rot_mat[-1]<0.5  or np.mean(footz)>-0.1 or np.max(footz)>0  or (base_std<=2e-4 and self.steps>=10) or abs(pose[-1])>0.6
+        return rot_mat[-1]<0.5  or (base_std<=2e-4 and self.steps>=10) or abs(pose[-1])>0.6
 
     def _calc_torque_reward(self):
         energy = self.robot.GetEnergyConsumptionPerControlStep()

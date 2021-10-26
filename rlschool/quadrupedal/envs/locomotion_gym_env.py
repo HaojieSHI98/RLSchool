@@ -320,8 +320,8 @@ class LocomotionGymEnv(gym.Env):
       elif self.task_mode == "cave":
         self.add_height,self.env_info = upstair_terrain(stepheight=0.18,mode="cave")
       elif self.task_mode == "balancebeam":
-        self.add_height,self.env_info = upstair_terrain(stepwidth=0.05,stepheight=6,mode="balance_beam")
-      elif self.task_mode == "highstair":
+        self.add_height,self.env_info = upstair_terrain(stepwidth=0.06,stepheight=6,mode="balance_beam")
+      elif self.task_mode == "stair13":
         self.add_height,self.env_info = upstair_terrain(stepwidth=0.4,stepheight=0.13,mode="stair-fix")
 
     if "yaw" in kwargs.keys():
